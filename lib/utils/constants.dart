@@ -4,7 +4,7 @@ const kScaffoldDecoration = BoxDecoration(
     gradient: LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: [Color(0xFF8865F8), Color(0xFF6F42F3)]));
+        colors: [Color(0xFF757C88), Color(0xFF2C3E4C)]));
 
 const kHomeScreenLocationButtonColor = Color(0x33FFFFFF);
 const kBorderAndTextColor = Color(0xFFB9BCF2);

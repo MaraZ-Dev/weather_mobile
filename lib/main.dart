@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:weather_mobile/screens/city_screen.dart';
-import 'package:weather_mobile/screens/home_screen.dart';
+import 'package:weather_mobile/ui/city_screen.dart';
+import 'package:weather_mobile/ui/home_screen.dart';
 
 void main() => runApp(const WeatherApp());
 
