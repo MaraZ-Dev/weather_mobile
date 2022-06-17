@@ -25,7 +25,7 @@ class Hourly {
   int? pressure;
   int? humidity;
   double? dewPoint;
-  int? uvi;
+  double? uvi;
   int? clouds;
   int? visibility;
   double? windSpeed;
@@ -42,7 +42,7 @@ class Hourly {
     pressure: json["pressure"],
     humidity: json["humidity"],
     dewPoint: json["dew_point"].toDouble(),
-    uvi: json["uvi"],
+    uvi: json["uvi"].toDouble(),
     clouds: json["clouds"],
     visibility: json["visibility"],
     windSpeed: json["wind_speed"].toDouble(),

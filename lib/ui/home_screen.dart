@@ -29,7 +29,12 @@ class _HomeScreenState extends State<HomeScreen> {
     // TODO: implement initState
     super.initState();
     getAllValues();
-    _weatherData.getHourlyWeather();
+    //getStuff();
+  }
+
+  void getStuff() async {
+    var weather = await _weatherData.getHourlyWeather();
+    print(weather);
   }
 
   void getAllValues() async {
@@ -41,7 +46,6 @@ class _HomeScreenState extends State<HomeScreen> {
         temperature = initialTemperature?.round();
         city = finalWeatherData['name'];
         country = finalWeatherData['sys']['country'];
-        print('$temperature, $city, $country');
       });
     } catch (e) {
       print(e);

@@ -1,11 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:weather_mobile/ui/city_screen.dart';
 import 'package:weather_mobile/ui/home_screen.dart';
+import 'package:weather_mobile/ui/onboarding_screen.dart';
 
-void main() => runApp(const WeatherApp());
+Future main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
+  final showHome = prefs.getBool('showHome') ?? false;
+  runApp(WeatherApp(showHome: showHome));
+}
 
-class WeatherApp extends StatelessWidget {
-  const WeatherApp({Key? key}) : super(key: key);
+class WeatherApp extends StatefulWidget {
+  const WeatherApp({Key? key, required this.showHome}) : super(key: key);
+
+  final bool showHome;
+
+  @override
+  State<WeatherApp> createState() => _WeatherAppState();
+}
+
+class _WeatherAppState extends State<WeatherApp> {
 
   @override
   Widget build(BuildContext context) {
@@ -14,10 +29,11 @@ class WeatherApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'DMSans',
       ),
-      initialRoute: HomeScreen.id,
+      initialRoute: widget.showHome ? HomeScreen.id : OnboardingScreen.id,
       routes: {
-        HomeScreen.id : (context) => const HomeScreen(),
-        CityScreen.id : (context) => const CityScreen()
+        HomeScreen.id: (context) => const HomeScreen(),
+        CityScreen.id: (context) => const CityScreen(),
+        OnboardingScreen.id: (context) => const OnboardingScreen()
       },
     );
   }
