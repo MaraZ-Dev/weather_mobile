@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:weather_mobile/networking/daily_forecast_model.dart';
 import 'package:weather_mobile/utils/utils.dart';
+import 'package:weather_mobile/networking/networking.dart';
 
-void showForecastBottomSheet(BuildContext context) {
+DateTime get dateTime => DateTime.now();
+WeatherData _weatherData = WeatherData();
+
+void showForecastBottomSheet(BuildContext context) async {
+  List<Hourly> _hourlyWeather = await _weatherData.getHourlyWeather();
+  List<Daily> _dailyWeather = await _weatherData.getDailyWeather();
+
   showModalBottomSheet(
     backgroundColor: Colors.transparent,
     isScrollControlled: true,
@@ -10,7 +19,7 @@ void showForecastBottomSheet(BuildContext context) {
       var size = MediaQuery.of(context).size;
       var width = size.width;
       var height = size.height;
-      return Wrap(alignment: WrapAlignment.center, children: [
+      return Wrap(children: [
         Container(
           //height: height * 0.8,
           decoration: const BoxDecoration(
@@ -43,6 +52,7 @@ void showForecastBottomSheet(BuildContext context) {
                         padding: EdgeInsets.symmetric(
                             horizontal: width * 0.11, vertical: height * 0.012),
                         child: Row(
+                          mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: const [
                             Text(
@@ -70,22 +80,41 @@ void showForecastBottomSheet(BuildContext context) {
                 ),
                 kSpace,
                 Container(
+                  height: height * 0.15,
+                  width: double.infinity,
                   padding: const EdgeInsets.all(5),
                   decoration: BoxDecoration(
                       border: Border.all(color: kColorForecastBoxColor),
                       borderRadius: BorderRadius.circular(10)),
-                  child: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        buildHourlyWeather(width, height),
-                        buildHourlyWeather(width, height),
-                        buildHourlyWeather(width, height),
-                        buildHourlyWeather(width, height),
-                        buildHourlyWeather(width, height)
-                      ],
-                    ),
-                  ),
+                  child: _hourlyWeather.isEmpty
+                      ? const CircularProgressIndicator(
+                          backgroundColor: Colors.transparent,
+                          color: Colors.blueGrey,
+                        )
+                      : Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              scrollDirection: Axis.horizontal,
+                              itemCount: 5,
+                              itemBuilder: (context, index) {
+                                return BuildHourlyForecast(
+                                  width: width,
+                                  height: height,
+                                  temp: _hourlyWeather[index].temp?.toInt(),
+                                  time: DateFormat('h:mm a').format(
+                                      dateTime.add(Duration(hours: 1 + index))),
+                                  image: _weatherData.getWeatherIcon(
+                                      _hourlyWeather[index].weather?.first.id ??
+                                          800),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
                 ),
                 kSpace,
                 kSpace,
@@ -111,20 +140,44 @@ void showForecastBottomSheet(BuildContext context) {
                 ),
                 kSpace,
                 Container(
+                  height: height * 0.38,
                   decoration: BoxDecoration(
                       border: Border.all(color: kColorForecastBoxColor),
                       borderRadius: BorderRadius.circular(10)),
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: width * 0.09, vertical: height * 0.024),
-                    child: Column(
-                      children: [
-                        buildDailyWeather(width, height),
-                        buildDailyWeather(width, height),
-                        buildDailyWeather(width, height),
-                        buildDailyWeather(width, height),
-                        buildDailyWeather(width, height)
-                      ],
-                    ),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: width * 0.09, vertical: height * 0.01),
+                    child: _dailyWeather.isEmpty
+                        ? const CircularProgressIndicator(
+                            backgroundColor: Colors.transparent,
+                            color: Colors.blueGrey,
+                          )
+                        : Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ListView.builder(
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: 5,
+                                itemBuilder: (context, index) {
+                                  return BuildDailyWeather(
+                                    date: DateFormat('d MMMM').format(dateTime
+                                        .add(Duration(days: 1 + index))),
+                                    width: width,
+                                    height: height,
+                                    temp:
+                                        _dailyWeather[index].temp?.day?.toInt(),
+                                    image: _weatherData.getWeatherIcon(
+                                        _dailyWeather[index]
+                                                .weather
+                                                ?.first
+                                                .id ??
+                                            800),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
                   ),
                 ),
               ],

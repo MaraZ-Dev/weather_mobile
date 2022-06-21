@@ -1,5 +1,5 @@
-class Hourly {
 
+class Hourly {
 
   Hourly({
     this.dt,
@@ -50,7 +50,7 @@ class Hourly {
     windGust: json["wind_gust"].toDouble(),
     weather: List<Weather>.from(json["weather"].map((x) => Weather.fromJson(x))),
     pop: json["pop"].toDouble(),
-    rain: Rain.fromJson(json["rain"]),
+    //rain: Rain.fromJson(json["rain"].map((x) => Rain.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {

@@ -1,28 +1,54 @@
 import 'package:flutter/material.dart';
 
-Padding buildHourlyWeather(double width, double height) {
-  return Padding(
-    padding: EdgeInsets.symmetric(horizontal: width * 0.04 , vertical: height * 0.018),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+class BuildHourlyForecast extends StatelessWidget {
+  BuildHourlyForecast({
+    Key? key,
+    this.width,
+    this.height,
+    this.temp,
+    this.time,
+    this.image
+  }) : super(key: key);
+
+  double? width;
+  double? height;
+  int? temp;
+  String? time;
+  String? image;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
       children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('29', style: TextStyle(fontSize: 17)),
-            Text('°C', style: TextStyle(fontSize: 8))
-          ],
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: width! * 0.02 , vertical: height! * 0.018),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('$temp', style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+                  const Text('°C', style: TextStyle(fontSize: 8, fontWeight: FontWeight.bold))
+                ],
+              ),
+              //SizedBox(height: height * 0.02),
+              Image.asset(
+                image!,
+                width: width! * 0.08,
+              ),
+              //SizedBox(height: height * 0.02),
+              Text(
+                time!,
+                style: const TextStyle(fontSize: 14),
+              )
+            ],
+          ),
         ),
-        Image.asset(
-          'images/sun.png',
-          width: width * 0.08,
-        ),
-        Text(
-          '8 a.m',
-          style: TextStyle(fontSize: 15),
-        )
+        SizedBox(width: width! * 0.001,)
       ],
-    ),
-  );
+    );
+  }
 }
+

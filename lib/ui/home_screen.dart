@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:weather_mobile/utils/constants.dart';
 import 'package:weather_mobile/ui/city_screen.dart';
 import 'package:weather_mobile/networking/networking.dart';
 import 'package:intl/intl.dart';
 import 'package:weather_mobile/utils/utils.dart';
 
-DateTime get dateTime => DateTime.now();
+
+///Initialize Weather class;
 WeatherData _weatherData = WeatherData();
 
 class HomeScreen extends StatefulWidget {
@@ -18,27 +18,29 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  /// Declare all my needed variables
   int? temperature;
   String? city;
   String? country;
-  String currentDate = DateFormat('E, d MMM').format(dateTime);
-  String currentTime = DateFormat('h:mm a').format(dateTime);
+  int? conditionCode;
+  String? currentDate;
+  String? currentTime;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    getAllValues();
-    //getStuff();
+    ///Start all the processes at initial launch
+    setState(() {
+      DateTime dateTime = DateTime.now();
+      getAllValues();
+      currentDate = DateFormat('E, d MMM').format(dateTime);
+      currentTime = DateFormat('h:mm a').format(dateTime);
+    });
   }
 
-  void getStuff() async {
-    var weather = await _weatherData.getHourlyWeather();
-    print(weather);
-  }
-
+  /// Get the required data from the API response
   void getAllValues() async {
-    WeatherData _weatherData = WeatherData();
     var finalWeatherData = await _weatherData.getCurrentWeatherData();
     try {
       setState(() {
@@ -46,6 +48,8 @@ class _HomeScreenState extends State<HomeScreen> {
         temperature = initialTemperature?.round();
         city = finalWeatherData['name'];
         country = finalWeatherData['sys']['country'];
+        conditionCode = finalWeatherData['weather'].first['id'];
+        print(conditionCode);
       });
     } catch (e) {
       print(e);
@@ -72,6 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    ///Search Location Button
                     GestureDetector(
                       onTap: () {
                         Navigator.pushNamed(context, CityScreen.id);
@@ -104,6 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
+                    ///Notifications Button
                     GestureDetector(
                       onTap: () {
                         showNotificationBottomSheet(context);
@@ -122,6 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     )
                   ],
                 ),
+                ///The Weather Container
                 Container(
                   decoration: BoxDecoration(
                       color: kHomeScreenLocationButtonColor,
@@ -129,7 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       border: Border.all(color: kBorderAndTextColor)),
                   child: Padding(
                     padding: EdgeInsets.symmetric(
-                        horizontal: width * 0.12, vertical: height * 0.05),
+                        horizontal: width * 0.12, vertical: height * 0.03),
                     child: Center(
                       child: temperature == null
                           ? const CircularProgressIndicator(
@@ -143,8 +150,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Image.asset(
-                                      'images/cloud_pic.png',
-                                      width: width * 0.21,
+                                      _weatherData.getWeatherIcon(conditionCode!),
+                                      width: width * 0.35,
                                     ),
                                     const SizedBox(
                                       width: 10,
@@ -158,8 +165,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                               color: Colors.white),
                                         ),
                                         Text(
-                                          currentDate,
-                                          style: TextStyle(color: Colors.white),
+                                          currentDate!,
+                                          style: const TextStyle(color: Colors.white),
                                         )
                                       ],
                                     )
@@ -172,7 +179,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   children: [
                                     Text(
                                       '$temperature',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 145, color: Colors.white),
                                     ),
                                     Padding(
@@ -188,7 +195,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 Text(
                                   '$city, $country • $currentTime',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 20, color: Colors.white),
                                 ),
                               ],
@@ -196,6 +203,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
+                ///Forecast Report Button
                 Material(
                   borderRadius: BorderRadius.circular(8),
                   color: kHomeScreenLocationButtonColor,
